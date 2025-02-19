@@ -40,4 +40,10 @@ function setup() {
 }
 
   endShape();
+
+
+textSize(14);
+  fill(0);
+  textAlign(CENTER, CENTER);
+  text("f = 440 * 2^((n - 49) / 12)", width / 2, height - 370);
 }
