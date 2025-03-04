@@ -1,0 +1,63 @@
+function setup() {
+  createCanvas(600, 400);
+  background(240);
+  textSize(14);
+  textAlign(CENTER, CENTER);
+  
+  let keys = ["A1", "A2", "A3", "A4", "A5", "A6"];
+  let frequencies = [55, 110, 220, 440, 880, 1760];
+  
+  let padding = 50;
+  
+  // Draw axes
+  stroke(0);
+  line(padding, height - padding, width - padding, height - padding); // x-axis
+  line(padding, padding, padding, height - padding); // y-axis
+  
+  let maxFreq = Math.max(...frequencies);
+  let dataPoints = [];
+  
+  // Define the DataPoint class (renamed from Point)
+  
+  class DataPoint {
+    constructor(x, y, label, frequency) {
+      this.x = x;
+      this.y = y;
+      this.label = label;
+      this.frequency = frequency;
+    }
+    
+    display() {
+      fill(50, 100, 200);
+      ellipse(this.x, this.y, 10, 10);
+      
+      fill(0);
+      text(this.label, this.x, height - padding + 20);
+      text(this.frequency + " Hz", this.x, this.y - 10);
+    }
+  }
+  
+  // Create DataPoint objects and display them
+  for (let i = 0; i < keys.length; i++) {
+    let x = map(i, 0, keys.length - 1, padding + 20, width - padding - 20);
+    let y = map(frequencies[i], 0, maxFreq, height - padding, padding);
+    let dp = new DataPoint(x, y, keys[i], frequencies[i]);
+    dataPoints.push(dp);
+    dp.display();
+  }
+  
+  // Draw the connecting curve between points
+  stroke(50, 100, 200);
+  strokeWeight(3);
+  noFill();
+  beginShape();
+  for (let dp of dataPoints) {
+    vertex(dp.x, dp.y);
+  }
+  endShape();
+  
+  // Display the formula
+  textSize(14);
+  fill(0);
+  text("f = 440 * 2^((n - 49) / 12)", width / 2, height - 370);
+}
