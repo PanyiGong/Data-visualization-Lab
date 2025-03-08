@@ -1,0 +1,111 @@
+let keys = ["A1", "A2", "A3", "A4", "A5", "A6"];
+let frequencies = [55, 110, 220, 440, 880, 1760];
+let dataPoints = [];
+
+function setup() {
+  createCanvas(600, 400);
+  textSize(14);
+  textAlign(CENTER, CENTER);
+}
+
+function draw() {
+  background(240);
+  drawAxes();
+  updatePlot();
+}
+
+function drawAxes() {
+  let padding = 50;
+  
+  // Set stroke weight for axes (thin lines)
+  stroke(0);
+  strokeWeight(1);
+  line(padding, height - padding, width - padding, height - padding); // x-axis
+  line(padding, padding, padding, height - padding); // y-axis
+  
+  // Axis labels
+  noStroke(); // Remove stroke for clear text
+  fill(0);
+  textSize(16);
+  text("Frequency of pianokeys", width/2, 30);
+  text("Note name", width / 2, height - 20);
+  text("Frequency (Hz)", 60, 30);
+ 
+  // Display formula 
+  strokeWeight(1);
+  textSize(12);
+  fill(0);
+  noStroke(); // Ensure no stroke on text
+  text("f = 440 * 2^((n - 49) / 12)", width / 2, height -350);
+}
+
+function updatePlot() {
+  let padding = 50;
+  let maxFreq = Math.max(...frequencies);
+  let minFreq = Math.min(...frequencies);
+
+  dataPoints = [];
+
+  // deFine DataPoint objects
+  for (let i = 0; i < keys.length; i++) {
+    let x = map(i, 0, keys.length - 1, padding + 20, width - padding - 20);
+    let y = map(frequencies[i], minFreq, maxFreq, height - padding, padding);
+    let dp = new DataPoint(x, y, keys[i], frequencies[i]);
+    dataPoints.push(dp);
+  }
+
+  
+  // Draw DataPoints
+  for (let dp of dataPoints) {
+    dp.display();
+  }
+
+  // Draw the connecting curve
+  stroke(50, 100, 200);
+  strokeWeight(2); 
+  noFill();
+  beginShape();
+  for (let dp of dataPoints) {
+    vertex(dp.x, dp.y);
+  }
+  endShape();
+
+}
+
+// DataPoint class
+class DataPoint {
+  constructor(x, y, label, frequency) {
+    this.x = x;
+    this.y = y;
+    this.label = label;
+    this.frequency = frequency;
+  }
+
+  display() {
+    fill(50, 100, 200);
+    noStroke();
+    ellipse(this.x, this.y, 10, 10);
+
+    fill(0);
+    textSize(12); // Make text slightly smaller for better spacing
+    text(this.label, this.x, height - 40);
+    text(this.frequency + " Hz", this.x, this.y - 10);
+  }
+}
+
+
+function addData(label, frequency) {
+  keys.push(label);
+  frequencies.push(frequency);
+}
+
+// Add new data points when a key is pressed
+function keyPressed() {
+  let newLabels = ["A7", "A8", "A9"];
+  let newFrequencies = [3520, 7040, 14080];
+
+  if (keys.length < newLabels.length + 6) { // Prevents adding beyond 9 points
+    let index = keys.length - 6; // Get the next index after initial values
+    addData(newLabels[index], newFrequencies[index]);
+  }
+}
